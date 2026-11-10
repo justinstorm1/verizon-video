@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Priority 5G Pitch</title>
+<style>
+:root{
+  --red:#F50A23;      /* Verizon Red (official RGB swatch) */
+  --coral:#FF3C2D;    /* Verizon Coral */
+  --yellow:#F5FF1E;   /* Verizon Yellow */
+  --stone:#F3EDE0;    /* Verizon Stone */
+  --ink:#000;
+  --paper:#fff;
+  --grey:#6F6F6F;
+  --line:rgba(255,255,255,.18);
+  --font:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000;overflow:hidden}
+body{font-family:var(--font);color:var(--paper);-webkit-font-smoothing:antialiased}
+body.hide-cursor,body.hide-cursor *{cursor:none!important}
+
+/* ---------- stage: fixed 1920x1080, scaled to fit ---------- */
+#viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;background:#000}
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .6s ease,visibility 0s linear .6s;overflow:hidden}
+.slide.current{opacity:1;visibility:visible;transition:opacity .6s ease,visibility 0s}
+.dark{background:#000;color:#fff}
+.light{background:var(--stone);color:#000}
+
+/* ---------- entrance animations (replay every time a slide is shown) ---------- */
+.a{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+.a.l{transform:translateX(-40px)} .a.r{transform:translateX(40px)} .a.s{transform:scale(.94)}
+.slide.play .a{opacity:1;transform:none}
+.bgimg{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.08);transition:transform 9s ease-out}
+.slide.play .bgimg{transform:scale(1)}
+
+/* ---------- shared type ---------- */
+.pad{position:absolute;inset:0;padding:96px 120px}
+.eyebrow{font-size:26px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
+.dark .eyebrow{color:var(--coral)}
+h1,h2{font-weight:700;letter-spacing:-.025em;line-height:1.02}
+h2{font-size:84px;margin-top:18px}
+.lede{font-size:34px;line-height:1.35;margin-top:26px;max-width:1100px}
+.dark .lede{color:rgba(255,255,255,.82)}
+.light .lede{color:#333}
+.red{color:var(--red)} .dark .red{color:var(--coral)}
+.note{position:absolute;left:120px;bottom:44px;font-size:20px;color:rgba(255,255,255,.62);letter-spacing:.01em}
+.light .note{color:#555}
+.footer{position:absolute;right:120px;bottom:44px;font-size:20px;color:rgba(255,255,255,.62);display:flex;gap:18px;align-items:center}
+.light .footer{color:#555}
+.footer b{font-weight:700;color:inherit}
+.tag{display:inline-block;font-size:20px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;border:2px solid currentColor;border-radius:999px}
+
+/* ---------- 1 TITLE ---------- */
+#s1 .bgimg{left:auto;width:58%;background-image:url(assets/tower.jpg);background-position:center 30%}
+#s1 .fade{position:absolute;inset:0;background:linear-gradient(90deg,#000 42%,rgba(0,0,0,.75) 55%,rgba(0,0,0,0) 80%)}
+#s1 .logo{height:34px;display:block}
+#s1 .kicker{display:flex;align-items:center;gap:28px;font-size:26px;color:rgba(255,255,255,.8)}
+#s1 .kicker i{width:2px;height:40px;background:rgba(255,255,255,.4)}
+#s1 h1{font-size:200px;margin-top:150px;letter-spacing:-.04em}
+#s1 h1 span{color:var(--red)}
+#s1 .sub{font-size:52px;font-weight:700;margin-top:18px;letter-spacing:-.015em}
+#s1 .pillar{margin-top:56px;display:flex;align-items:center;gap:18px;font-size:26px}
+#s1 .pillar .tag{color:var(--yellow)}
+#s1 .team{margin-top:22px;font-size:26px;color:rgba(255,255,255,.75)}
+
+/* ---------- 2 PROBLEM ---------- */
+#s2 .bgimg{background-image:url(assets/stadium-bowl.jpg)}
+#s2 .bgimg{background-position:center 20%}
+#s2 .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.9) 55%,#000 80%)}
+#s2 h2{max-width:1350px}
+.stat{display:flex;align-items:center;gap:34px;margin-top:44px;max-width:1300px}
+.stat .big{font-size:120px;font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--yellow);flex:none}
+.stat .big small{font-size:56px;letter-spacing:-.02em;margin-left:8px}
+.stat p{font-size:29px;line-height:1.35;color:rgba(255,255,255,.88)}
+.stat p cite{display:block;font-style:normal;font-size:20px;color:rgba(255,255,255,.55);margin-top:8px}
+.costs{position:absolute;left:120px;right:120px;bottom:150px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+.cost{border-top:4px solid var(--red);padding-top:22px}
+.cost .k{font-size:22px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.65)}
+.cost .v{font-size:50px;font-weight:700;margin-top:8px;letter-spacing:-.02em}
+.cost p{font-size:25px;line-height:1.35;margin-top:12px;color:rgba(255,255,255,.82)}
+
+/* ---------- 3 GAP ---------- */
+#s3 .cols{display:grid;grid-template-columns:760px 1fr;gap:80px;margin-top:10px}
+#s3 h2{font-size:76px}
+.proofs{margin-top:40px;display:grid;gap:20px}
+.proof{display:flex;align-items:stretch;background:#000;color:#fff;border-radius:18px;overflow:hidden}
+.proof .ph{width:200px;flex:none;background:url(assets/vz-engineer.jpg) center/cover}
+.proof .bar-ac{width:12px;flex:none;background:var(--red)}
+.proof .tx{padding:24px 28px}
+.proof .tx b{display:block;font-size:20px;letter-spacing:.06em;text-transform:uppercase;color:var(--coral)}
+.proof .tx p{font-size:25px;line-height:1.35;margin-top:8px}
+.proof .tx small{display:block;font-size:18px;color:rgba(255,255,255,.6);margin-top:8px}
+table.cmp{width:100%;border-collapse:collapse;font-size:28px;margin-top:6px}
+.cmp th{text-align:left;font-size:22px;letter-spacing:.06em;text-transform:uppercase;padding:0 18px 18px;color:#555;vertical-align:bottom}
+.cmp th.us{color:var(--red)}
+.cmp td{padding:26px 18px;border-top:2px solid rgba(0,0,0,.14);vertical-align:top;line-height:1.3}
+.cmp td:first-child{font-weight:700;width:180px;padding-left:0}
+.cmp td.us{font-weight:700;background:rgba(245,10,35,.07)}
+.cmp tr.a{transform:translateX(30px)}
+
+/* ---------- 4 SOLUTION ---------- */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:64px}
+.plan{border:2px solid var(--line);border-radius:22px;padding:40px 40px 44px;position:relative;overflow:hidden}
+.plan.hl{border-color:var(--red);background:rgba(245,10,35,.08)}
+.plan .who{font-size:24px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.plan .price{font-size:110px;font-weight:700;letter-spacing:-.04em;line-height:1;margin-top:14px}
+.plan .price sup{font-size:50px;vertical-align:top;position:relative;top:10px;margin-right:4px}
+.plan .price small{font-size:30px;font-weight:400;letter-spacing:0;color:rgba(255,255,255,.7)}
+.plan .spec{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+.plan .spec div{font-size:20px;color:rgba(255,255,255,.65)}
+.plan .spec b{display:block;font-size:34px;color:#fff;letter-spacing:-.01em}
+.plan .eg{font-size:23px;margin-top:20px;color:rgba(255,255,255,.82)}
+.steps{display:flex;gap:0;margin-top:80px;align-items:center}
+.step{flex:1;display:flex;align-items:center;gap:18px;font-size:27px;font-weight:700}
+.step em{font-style:normal;flex:none;width:52px;height:52px;border-radius:50%;background:var(--red);display:grid;place-items:center;font-size:24px}
+.step:not(:last-child)::after{content:"";flex:1;height:2px;background:rgba(255,255,255,.25);margin:0 22px}
+
+/* ---------- 5 DEMO ---------- */
+#s5 .side{position:absolute;right:0;top:0;bottom:0;width:560px;background:url(assets/stadium-speedtest.jpg) 30% center/cover}
+#s5 .side::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#000 0%,rgba(0,0,0,.25) 40%,rgba(0,0,0,0))}
+#s5 .pad{right:560px;padding-right:60px}
+#chart{display:block;margin-top:34px}
+#chart text{font-family:var(--font)}
+.read{display:flex;gap:56px;margin-top:22px}
+.read div{font-size:22px;color:rgba(255,255,255,.7);letter-spacing:.04em;text-transform:uppercase;font-weight:700}
+.read b{display:block;font-size:92px;letter-spacing:-.03em;color:#fff;line-height:1;margin-top:8px;font-variant-numeric:tabular-nums}
+.read b small{font-size:36px;letter-spacing:0;margin-left:6px;text-transform:none}
+.read .boost b{color:var(--yellow)}
+.read .ok{align-self:flex-end;font-size:26px;text-transform:none;letter-spacing:0;color:#fff;display:flex;align-items:center;gap:12px;padding-bottom:12px;opacity:0;transition:opacity .5s}
+.read .ok.on{opacity:1}
+.read .ok i{width:34px;height:34px;border-radius:50%;background:var(--yellow);color:#000;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:22px}
+
+/* ---------- 6 FAIRNESS ---------- */
+#s6 .cols{display:grid;grid-template-columns:1fr 760px;gap:90px;margin-top:6px}
+#s6 h2{font-size:76px}
+.cell{margin-top:56px}
+.cell .cap{font-size:22px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#555}
+.bar{display:flex;height:150px;border-radius:14px;overflow:hidden;margin-top:14px;background:rgba(0,0,0,.08)}
+.bar .reg,.bar .gua{width:0;transition:width 1.3s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;justify-content:center;padding:0 28px;white-space:nowrap;overflow:hidden}
+.bar .reg{background:#000;color:#fff}
+.bar .gua{background:var(--red);color:#fff}
+.bar .gua.on{width:35%} .bar .reg.on{width:65%}
+.bar b{font-size:56px;letter-spacing:-.02em}
+.bar span{font-size:22px;opacity:.9}
+.rules{list-style:none;counter-reset:r}
+.rules li{counter-increment:r;display:grid;grid-template-columns:70px 1fr;padding:34px 0;border-top:2px solid rgba(0,0,0,.14)}
+.rules li::before{content:"0" counter(r);font-size:30px;font-weight:700;color:var(--red)}
+.rules b{font-size:36px;letter-spacing:-.01em}
+.rules p{font-size:25px;line-height:1.35;color:#333;margin-top:8px}
+
+/* ---------- 7 ARCHITECTURE ---------- */
+#s7 .bgimg{background-image:url(assets/network-racks.jpg);opacity:.28}
+#s7 .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.6),#000 75%)}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:40px;margin-top:90px;position:relative}
+.node{background:rgba(255,255,255,.07);border:2px solid var(--line);border-radius:20px;padding:34px 32px;min-height:300px;position:relative}
+.node.key{border-color:var(--red);background:rgba(245,10,35,.14)}
+.node em{font-style:normal;font-size:24px;font-weight:700;color:var(--coral)}
+.node b{display:block;font-size:40px;line-height:1.1;margin-top:14px;letter-spacing:-.02em}
+.node p{font-size:26px;line-height:1.35;color:rgba(255,255,255,.8);margin-top:16px}
+.node:not(:last-child)::after{content:"→";position:absolute;right:-34px;top:50%;transform:translateY(-50%);font-size:30px;color:rgba(255,255,255,.6)}
+.loop{margin-top:30px;display:flex;align-items:center;gap:18px;font-size:26px;color:rgba(255,255,255,.8)}
+.loop svg{flex:none}
+.prod{margin-top:56px;border-left:4px solid var(--red);padding-left:24px;font-size:27px;line-height:1.4;color:rgba(255,255,255,.85)}
+.prod b{color:#fff}
+
+/* ---------- 8 BUSINESS ---------- */
+#s8 .photo{position:absolute;right:0;top:0;bottom:0;width:640px;background:url(assets/retail.jpg) 40% center/cover}
+#s8 .pad{right:640px;padding-right:70px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:0 60px;margin-top:40px}
+.kpi{border-top:3px solid #000;padding:24px 0 34px}
+.kpi .n{font-size:118px;font-weight:700;letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums}
+.kpi .n.red{color:var(--red)}
+.kpi b{display:block;font-size:30px;margin-top:12px;letter-spacing:-.01em}
+.kpi p{font-size:23px;line-height:1.35;color:#444;margin-top:6px}
+
+/* ---------- 9 PILOT + CLOSE ---------- */
+#s9 .bgimg{left:auto;width:50%;background-image:url(assets/technicians.jpg);background-position:35% center}
+#s9 .fade{position:absolute;inset:0;background:linear-gradient(90deg,#000 50%,rgba(0,0,0,.7) 62%,rgba(0,0,0,.1) 90%)}
+#s9 .pad{right:640px}
+.ask{margin-top:36px;display:flex;align-items:stretch;background:rgba(245,10,35,.14);border:2px solid var(--red);border-radius:18px;overflow:hidden}
+.ask .k{flex:none;background:var(--red);display:flex;align-items:center;padding:0 28px;font-size:22px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.ask p{padding:22px 28px;font-size:30px;line-height:1.35;font-weight:700}
+.facts{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:80px;margin-top:34px}
+.facts div{font-size:22px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.65)}
+.facts b{display:block;font-size:60px;color:#fff;letter-spacing:-.03em;margin-top:6px;text-transform:none}
+.tl{display:grid;grid-template-columns:repeat(6,1fr);margin-top:34px;border-radius:12px;overflow:hidden}
+.tl div{padding:12px 16px;border-right:2px solid #000;font-size:22px;font-weight:700;line-height:1.2}
+.tl div small{display:block;font-size:17px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.7}
+.targets{margin-top:30px;display:grid;grid-template-columns:auto auto;justify-content:start;gap:16px 70px;font-size:26px;color:rgba(255,255,255,.85)}
+.targets b{color:var(--yellow)}
+.close{position:absolute;left:120px;bottom:118px;display:flex;align-items:center;gap:36px}
+.close .logo{height:32px}
+.close .line{font-size:44px;font-weight:700;letter-spacing:-.015em}
+.close i{width:2px;height:60px;background:rgba(255,255,255,.4)}
+
+/* ---------- timed builds: [data-at] items wait for their cue ---------- */
+.slide.play .a.wait{opacity:0;transform:translateY(28px)}
+.slide.play .a.r.wait{transform:translateX(40px)}
+
+/* ---------- overlays (never visible unless toggled) ---------- */
+#progress{position:fixed;left:0;bottom:0;height:4px;background:var(--red);width:0;z-index:20;transition:width .2s linear;display:none}
+body.autoplay #progress{display:block}
+body.autoplay.clean #progress{display:none}
+#count{position:fixed;inset:0;display:none;align-items:center;justify-content:center;font:700 220px var(--font);color:#fff;background:rgba(0,0,0,.85);z-index:30}
+#help{position:fixed;right:24px;top:24px;z-index:40;background:rgba(20,20,20,.95);border:1px solid #333;border-radius:14px;padding:22px 26px;font-size:15px;line-height:1.75;color:#ddd;display:none;max-width:420px}
+#help h3{font-size:17px;margin-bottom:8px;color:#fff}
+#help kbd{display:inline-block;min-width:26px;text-align:center;border:1px solid #555;border-radius:5px;padding:0 6px;margin-right:6px;background:#111;color:#fff;font-family:inherit}
+#toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);background:rgba(20,20,20,.95);color:#fff;border:1px solid #333;padding:10px 18px;border-radius:999px;font-size:15px;z-index:45;opacity:0;transition:opacity .3s;pointer-events:none}
+#toast.on{opacity:1}
+
+@media (prefers-reduced-motion: reduce){
+  .a,.bgimg,.bar .reg,.bar .gua{transition:none!important}
+  .slide.play .a.wait{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+<!-- 1 · TITLE -->
+<section class="slide dark" id="s1" data-dur="8">
+  <div class="bgimg"></div><div class="fade"></div>
+  <div class="pad">
+    <div class="kicker a"><img class="logo" src="assets/vz-wordmark-white-tight.svg" alt="Verizon"><i></i>Smart Campus Innovation Challenge 2026 · NJIT</div>
+    <h1 class="a" style="transition-delay:.25s">Priority <span>5G</span></h1>
+    <div class="sub a" style="transition-delay:.45s">Guaranteed campus 5G, by subscription.</div>
+    <div class="pillar a" style="transition-delay:.7s"><span class="tag">Pillar</span>Next-Gen Products &amp; Services to Enhance Customer Experience</div>
+    <div class="team a" id="teamLine" style="transition-delay:.85s"></div>
+  </div>
+  <div class="note">Student concept. Plans, prices and network figures are illustrative and simulated.</div>
+</section>
+
+<!-- 2 · PROBLEM -->
+<section class="slide dark" id="s2" data-dur="15">
+  <div class="bgimg"></div><div class="shade"></div>
+  <div class="pad">
+    <div class="eyebrow a">The problem</div>
+    <h2 class="a" style="transition-delay:.15s">When campus gets crowded, the network gives out at the moment it matters most.</h2>
+    <div class="stat a" style="transition-delay:.6s">
+      <div class="big">50+<small>TB</small></div>
+      <p>Data Verizon planned for <b>per stadium, per match</b> at FIFA World Cup 2026, and added an estimated 3–5× capacity to keep up.
+        <cite>Source: Verizon, World Cup 2026 network announcement, Apr 16, 2026</cite></p>
+    </div>
+  </div>
+  <div class="costs">
+    <div class="cost a" style="transition-delay:.9s"><div class="k">Food truck</div><div class="v">A sale</div><p>Card readers time out during the lunch rush.</p></div>
+    <div class="cost a" style="transition-delay:1.1s"><div class="k">Student creator</div><div class="v">A stream</div><p>Uplink collapses just as the game gets good.</p></div>
+    <div class="cost a" style="transition-delay:1.3s"><div class="k">Online exam</div><div class="v">A grade</div><p>A dropped connection mid-exam or interview.</p></div>
+    <div class="cost a" style="transition-delay:1.5s"><div class="k">Campus ops</div><div class="v">A safety call</div><p>Radios and scanners compete with thousands of fans.</p></div>
+  </div>
+  <div class="footer"><b>Priority 5G</b> 02</div>
+</section>
+
+<!-- 3 · GAP -->
+<section class="slide light" id="s3" data-dur="16">
+  <div class="pad">
+    <div class="cols">
+      <div>
+        <div class="eyebrow a">The gap</div>
+        <h2 class="a" style="transition-delay:.15s">Slicing works. It just isn’t built for campus life yet.</h2>
+        <div class="proofs">
+          <div class="proof a" data-at="2.6">
+            <div class="ph"></div>
+            <div class="tx">
+              <b>Proven by Verizon</b>
+              <p>The Frontline Network Slice keeps first responders connected through congestion.</p>
+              <small>Nationwide on 5G standalone devices, April 2026.</small>
+            </div>
+          </div>
+          <div class="proof a" data-at="5.4">
+            <div class="bar-ac"></div>
+            <div class="tx">
+              <b>Rivals are moving</b>
+              <p>T-Mobile’s SuperMobile puts a nationwide 5G slice on a business phone plan.</p>
+              <small>Launched August 2025.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding-top:70px">
+        <table class="cmp">
+          <thead><tr class="a" data-at="9.4"><th></th><th>Slicing today</th><th class="us">Priority 5G</th></tr></thead>
+          <tbody>
+            <tr class="a" data-at="9.8"><td>Built for</td><td>First responders, enterprises, business lines</td><td class="us">Students, families, campus sellers</td></tr>
+            <tr class="a" data-at="10.4"><td>How you buy</td><td>Account team or business account</td><td class="us">Pick a plan online in minutes</td></tr>
+            <tr class="a" data-at="11.0"><td>What you get</td><td>Priority for the whole line</td><td class="us">Boost hours with a live guarantee status</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="note">“Slicing today” describes these offers in general terms. Sources: Verizon (Apr 23, 2026); T-Mobile (Aug 27, 2025).</div>
+  <div class="footer"><b>Priority 5G</b> 03</div>
+</section>
+
+<!-- 4 · SOLUTION -->
+<section class="slide dark" id="s4" data-dur="17">
+  <div class="pad">
+    <div class="eyebrow a">The solution</div>
+    <h2 class="a" style="transition-delay:.15s">Like a phone plan, <span class="red">with a guarantee.</span></h2>
+    <div class="plans">
+      <div class="plan a" style="transition-delay:.5s">
+        <div class="who">Individual</div>
+        <div class="price"><sup>$</sup>12<small>/mo</small></div>
+        <div class="spec"><div><b>25</b>Mbps boost</div><div><b>≤40</b>ms latency</div><div><b>5</b>boost hrs/mo</div></div>
+        <div class="eg">A student on game day</div>
+      </div>
+      <div class="plan a" style="transition-delay:.7s">
+        <div class="who">Family · up to 5 lines</div>
+        <div class="price"><sup>$</sup>35<small>/mo</small></div>
+        <div class="spec"><div><b>50</b>Mbps boost</div><div><b>≤40</b>ms latency</div><div><b>15</b>boost hrs/mo</div></div>
+        <div class="eg">A family at move-in</div>
+      </div>
+      <div class="plan hl a" style="transition-delay:.9s">
+        <div class="who">Small business · 10 devices</div>
+        <div class="price"><sup>$</sup>59<small>/mo</small></div>
+        <div class="spec"><div><b>25</b>Mbps boost</div><div><b>≤30</b>ms latency</div><div><b>30</b>boost hrs/mo</div></div>
+        <div class="eg">A food truck at lunch</div>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step a" style="transition-delay:1.3s"><em>1</em>Subscribe online</div>
+      <div class="step a" style="transition-delay:1.5s"><em>2</em>Everyday priority</div>
+      <div class="step a" style="transition-delay:1.7s"><em>3</em>Guaranteed boosts</div>
+      <div class="step a" style="transition-delay:1.9s"><em>4</em>Upgrade speed or time</div>
+    </div>
+  </div>
+  <div class="note">Illustrative plans. Speed tiers: Fast = 2× speed, 5 ms lower; Max = 4× speed, 10 ms lower.</div>
+  <div class="footer"><b>Priority 5G</b> 04</div>
+</section>
+
+<!-- 5 · DEMO -->
+<section class="slide dark" id="s5" data-dur="11">
+  <div class="side a r"></div>
+  <div class="pad">
+    <div class="eyebrow a">Simulated lunch rush</div>
+    <h2 class="a" style="transition-delay:.15s;font-size:70px">The crowd arrives. <span class="red">The boost holds.</span></h2>
+    <svg id="chart" width="1180" height="470" viewBox="0 0 1180 470" aria-label="Latency during a simulated crowd surge"></svg>
+    <div class="read">
+      <div>Regular network<b id="rReg">30<small>ms</small></b></div>
+      <div class="boost">Food truck boost<b id="rBoost">18<small>ms</small></b></div>
+      <div class="ok" id="okBadge"><i>✓</i>Guarantee met (≤25 ms)</div>
+    </div>
+  </div>
+  <div class="note">Simulated network. Small business plan on the Fast tier: 50 Mbps, ≤25 ms, 99.99% reliability.</div>
+</section>
+
+<!-- 6 · FAIRNESS -->
+<section class="slide light" id="s6" data-dur="15">
+  <div class="pad">
+    <div class="cols">
+      <div>
+        <div class="eyebrow a">The obvious question</div>
+        <h2 class="a" style="transition-delay:.15s">If everyone gets a slice, isn’t it just normal 5G?</h2>
+        <div class="cell a" style="transition-delay:.4s">
+          <div class="cap">Every campus cell</div>
+          <div class="bar">
+            <div class="gua" data-at="3.4"><b>35%</b><span>Guarantee cap</span></div>
+            <div class="reg" data-at="6.6"><b>65%</b><span>Always kept for regular users</span></div>
+          </div>
+        </div>
+      </div>
+      <ol class="rules" style="padding-top:40px">
+        <li class="a r" data-at="3.0"><span><b>Guarantees are capped</b><p>No more than 35% of any cell. Regular users always keep the other 65%.</p></span></li>
+        <li class="a r" data-at="8.2"><span><b>Seats and hours are limited</b><p>When a plan is full on a cell, new sign-ups join a waitlist.</p></span></li>
+        <li class="a r" data-at="10.2"><span><b>No silent slowdowns</b><p>A boost that won’t fit is refused with the next open time. It never starts slow.</p></span></li>
+      </ol>
+    </div>
+  </div>
+  <div class="note">Illustrative design rules for this concept.</div>
+  <div class="footer"><b>Priority 5G</b> 06</div>
+</section>
+
+<!-- 7 · ARCHITECTURE -->
+<section class="slide dark" id="s7" data-dur="11">
+  <div class="bgimg"></div><div class="shade"></div>
+  <div class="pad">
+    <div class="eyebrow a">How it works</div>
+    <h2 class="a" style="transition-delay:.15s;font-size:76px">From subscription to a guaranteed boost.</h2>
+    <div class="flow">
+      <div class="node a" data-at="0.6"><em>01</em><b>Plan &amp; boost</b><p>Subscribe online. Tap to start a boost.</p></div>
+      <div class="node key a" data-at="1.6"><em>02</em><b>Admission control</b><p>Sells seats only while they fit under the cap.</p></div>
+      <div class="node key a" data-at="4.5"><em>03</em><b>Verizon 5G SA core</b><p>Enforces each plan’s slice and priority.</p></div>
+      <div class="node a" data-at="6.9"><em>04</em><b>SLA monitoring</b><p>Checks every boost. Refunds any hour that misses.</p></div>
+    </div>
+    <div class="loop a" data-at="8.6">
+      <svg width="60" height="30" viewBox="0 0 60 30"><path d="M58 6 H8 M8 6 L16 0 M8 6 L16 12" stroke="#FF3C2D" stroke-width="3" fill="none"/><path d="M58 6 V24 H2" stroke="#FF3C2D" stroke-width="3" fill="none" opacity=".45"/></svg>
+      Monitoring feeds back into admission control to tune seat limits.
+    </div>
+    <div class="prod a" data-at="9.2"><b>Production path:</b> 3GPP NEF or CAMARA-style Quality-on-Demand APIs. Monitoring uses aggregate network data only.</div>
+  </div>
+  <div class="footer"><b>Priority 5G</b> 07</div>
+</section>
+
+<!-- 8 · BUSINESS -->
+<section class="slide light" id="s8" data-dur="12">
+  <div class="photo a r"></div>
+  <div class="pad">
+    <div class="eyebrow a">Why it matters to Verizon</div>
+    <h2 class="a" style="transition-delay:.15s;font-size:72px">Recurring revenue from the slicing Verizon already has.</h2>
+    <div class="kpis">
+      <div class="kpi a" style="transition-delay:.5s"><div class="n red" data-count="1.2" data-pre="$" data-suf="M" data-dec="1">$0M</div><b>Year-one revenue</b><p>Monthly plans across 25 sites, three customer types.</p></div>
+      <div class="kpi a" style="transition-delay:.7s"><div class="n" data-count="10" data-suf="%">0%</div><b>From upgrades</b><p>Speed tiers and extra hours grow revenue per subscriber.</p></div>
+      <div class="kpi a" style="transition-delay:.9s"><div class="n" data-count="225">0</div><b>Enterprise leads a year</b><p>Businesses that outgrow a plan move to enterprise slicing.</p></div>
+      <div class="kpi a" style="transition-delay:1.1s"><div class="n" data-count="65" data-suf="%">0%</div><b>Kept for everyone</b><p>Fair by design, protecting the campus relationship.</p></div>
+    </div>
+  </div>
+  <div class="note">All figures simulated from the team’s business-model default assumptions.</div>
+</section>
+
+<!-- 9 · PILOT + CLOSE -->
+<section class="slide dark" id="s9" data-dur="13">
+  <div class="bgimg"></div><div class="fade"></div>
+  <div class="pad">
+    <div class="eyebrow a">Our ask</div>
+    <h2 class="a" style="transition-delay:.15s;font-size:76px">Two NJIT cells. One semester.</h2>
+    <div class="ask a" style="transition-delay:.4s"><div class="k">We’re asking</div><p>Verizon network-slicing access on two NJIT campus cells for a 16-week pilot.</p></div>
+    <div class="facts">
+      <div class="a" data-at="3.4">Duration<b>16 weeks</b></div>
+      <div class="a" data-at="3.7">Subscribers<b>~60</b></div>
+      <div class="a" data-at="4.0">Cells<b>2</b></div>
+    </div>
+    <div class="tl a" data-at="4.6">
+      <div style="background:#333"><small>Wk 1–3</small>Recruit</div>
+      <div style="background:#444"><small>Wk 4–5</small>Devices</div>
+      <div style="background:#fff;color:#000"><small>Wk 6–9</small>Free month</div>
+      <div style="background:var(--red)"><small>Wk 10–13</small>Paid month</div>
+      <div style="background:var(--yellow);color:#000"><small>Wk 14</small>Stress test</div>
+      <div style="background:#333"><small>Wk 15–16</small>Decide</div>
+    </div>
+    <div class="targets">
+      <div class="a" data-at="5.2">Boost guarantee hit rate <b>≥ 99.9%</b></div>
+      <div class="a" data-at="5.4">Regular users at peak <b>≤ 10% slower</b></div>
+      <div class="a" data-at="5.6">Boost latency <b>≤ 30 ms, 3× lower</b></div>
+      <div class="a" data-at="5.8">Upgrade rate <b>20%</b> · Keep plan <b>70%</b></div>
+    </div>
+  </div>
+  <div class="close a" data-at="6.9">
+    <img class="logo" src="assets/vz-wordmark-white-tight.svg" alt="Verizon"><i></i>
+    <div class="line">Priority <span class="red">5G</span>: guaranteed 5G for everyone on campus.</div>
+  </div>
+  <div class="note">Targets are proposals for the pilot, not results.</div>
+</section>
+
+</div></div>
+
+<div id="progress"></div>
+<div id="count"></div>
+<div id="toast"></div>
+<div id="help">
+  <h3>Presentation controls</h3>
+  <kbd>→</kbd><kbd>Space</kbd> next &nbsp; <kbd>←</kbd> back<br>
+  <kbd>1</kbd>–<kbd>9</kbd> jump to slide &nbsp; <kbd>Home</kbd> first<br>
+  <kbd>F</kbd> fullscreen<br>
+  <kbd>N</kbd> open speaker-notes window (script + timer)<br>
+  <kbd>A</kbd> auto-play recording run (3-2-1, then advances on the script timing)<br>
+  <kbd>P</kbd> pause / resume auto-play &nbsp; <kbd>Esc</kbd> stop<br>
+  <kbd>R</kbd> replay this slide’s animation<br>
+  <kbd>B</kbd> show / hide the auto-play progress bar<br>
+  <kbd>H</kbd> or <kbd>?</kbd> toggle this help
+</div>
+
+<script>
+/* ===== Edit this line to show your team on the title slide (leave empty to hide) ===== */
+const TEAM = "";   // e.g. "Team Name · Alex R., Sam K., Jordan P. · NJIT"
+
+/* ===== Voiceover script (also shown in the speaker-notes window, press N) ===== */
+const SCRIPT = [
+  "Hi! For the Verizon Smart Campus Challenge, our concept is Priority 5G: guaranteed campus 5G, by subscription.",
+  "Picture game day at NJIT. Thousands of phones join one cell and the network crawls. Card readers time out. Live streams freeze. Every failure costs something: a sale, a stream, a grade, or a safety call.",
+  "Verizon already has the fix: network slicing. Its Frontline slice keeps first responders connected, and rivals like T-Mobile now sell slicing on business plans. But nothing is built for a student, a family, or a food truck’s lunch rush.",
+  "Priority 5G changes that. Pick a plan online: Individual at twelve dollars a month, Family at thirty-five, Small Business at fifty-nine. Each includes everyday priority, plus boost hours with a real speed and latency guarantee, and upgrades for more speed or time.",
+  "Here’s a simulated lunch rush. The regular network climbs to one hundred sixty-two milliseconds. The food truck’s boost holds at eighteen, inside its guarantee.",
+  "Isn’t that just normal 5G? No. Guarantees are capped at thirty-five percent of each cell, so regular users always keep sixty-five. Full plans get a waitlist, and a boost that won’t fit is refused, never silently slowed.",
+  "Under the hood, admission control sells seats only while they fit, Verizon’s standalone core enforces each slice, and monitoring refunds any boost hour that misses its guarantee.",
+  "For Verizon, that’s recurring revenue from slicing it already has: a simulated one point two million dollars in year one across twenty-five sites, plus a pipeline of enterprise leads.",
+  "We’re asking Verizon for slicing on two NJIT cells: a sixteen-week pilot with about sixty subscribers. Priority 5G: guaranteed 5G, for everyone on campus. Thank you!"
+];
+
+</script>
+<script src="deck.js"></script>
+</body>
+</html>

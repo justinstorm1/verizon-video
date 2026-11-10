@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Speaker Notes</title>
+<style>
+:root{--red:#F50A23;--yellow:#F5FF1E;--bg:#0d0d0d;--panel:#1a1a1a;--fg:#f2f2f2;--mute:#9a9a9a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;padding:24px 28px;min-height:100vh}
+header{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.slideno{font-size:22px;font-weight:700}
+.slideno span{color:var(--red)}
+.ttl{font-size:18px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.clocks{margin-left:auto;display:flex;gap:22px;font-variant-numeric:tabular-nums}
+.clocks div{font-size:14px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;text-align:right}
+.clocks b{display:block;font-size:30px;color:var(--fg);letter-spacing:0}
+.clocks b.over{color:var(--red)}
+.now{margin-top:22px;background:var(--panel);border-left:6px solid var(--red);border-radius:10px;padding:26px 30px;font-size:34px;line-height:1.45}
+.nextl{margin-top:18px;font-size:14px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.next{margin-top:8px;font-size:22px;line-height:1.45;color:#bdbdbd}
+.bar{height:6px;background:#2a2a2a;border-radius:9px;margin-top:20px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--yellow)}
+.btns{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+button{font:inherit;font-size:16px;font-weight:700;background:#262626;color:var(--fg);border:1px solid #3a3a3a;border-radius:9px;padding:10px 16px;cursor:pointer}
+button:hover{background:#333}
+button.pri{background:var(--red);border-color:var(--red)}
+.hint{margin-top:16px;font-size:14px;color:var(--mute);line-height:1.6}
+.wait{font-size:20px;color:var(--mute);margin-top:30px}
+.status{font-size:14px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:.06em}
+</style>
+</head>
+<body>
+<header>
+  <div class="slideno">Slide <span id="n">–</span> / <span id="t">–</span></div>
+  <div class="ttl" id="ttl"></div>
+  <div class="status" id="status"></div>
+  <div class="clocks">
+    <div>This slide<b id="cs">0:00</b></div>
+    <div>Target<b id="tg">0:00</b></div>
+    <div>Total / 2:00<b id="ct">0:00</b></div>
+  </div>
+</header>
+<div class="bar"><i id="bar"></i></div>
+<div id="body"><p class="wait">Waiting for the slide window… keep it open, then press N there again if this stays empty.</p></div>
+<div class="btns">
+  <button id="bPrev">← Back</button>
+  <button id="bNext" class="pri">Next →</button>
+  <button id="bClock">Restart timer</button>
+  <button id="bReplay">Replay slide</button>
+  <button id="bAuto">Auto-play run (A)</button>
+  <button id="bPause">Pause / resume (P)</button>
+</div>
+<p class="hint">Keys in this window also drive the slides: → / Space next, ← back, T restart timer, R replay, A auto-play, P pause.
+Record only the slide window (it shows nothing but the slides). Round 1 limit: 2:00.</p>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  let st = null, slideAt = Date.now();
+  const deck = () => window.opener && !window.opener.closed ? window.opener : null;
+  const send = (cmd, extra = {}) => { const d = deck(); if (d) d.postMessage({ type: "p5g-cmd", cmd, ...extra }, "*"); };
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const mmss = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+
+  addEventListener("message", e => {
+    const d = e.data || {};
+    if (d.type !== "p5g-state") return;
+    if (!st || st.idx !== d.idx) slideAt = Date.now();
+    st = d; render();
+  });
+  function render() {
+    if (!st) return;
+    $("n").textContent = st.idx + 1; $("t").textContent = st.total;
+    $("ttl").textContent = st.titles[st.idx] || "";
+    $("tg").textContent = mmss(st.durs[st.idx] * 1000);
+    $("status").textContent = st.auto ? (st.paused ? "Auto-play paused" : "Auto-play running") : "";
+    const now = st.script[st.idx] || "";
+    const nx = st.script[st.idx + 1];
+    $("body").innerHTML = `<div class="now">${esc(now)}</div>` +
+      (nx ? `<div class="nextl">Next slide</div><div class="next">${esc(nx)}</div>` : `<div class="nextl">Last slide</div>`);
+  }
+  setInterval(() => {
+    if (!st) return;
+    const cs = Date.now() - slideAt;
+    $("cs").textContent = mmss(cs);
+    $("cs").classList.toggle("over", cs > st.durs[st.idx] * 1000 + 1500);
+    const ct = st.clockStart ? Date.now() - st.clockStart : 0;
+    $("ct").textContent = mmss(ct);
+    $("ct").classList.toggle("over", ct > 120000);
+    $("bar").style.width = Math.min(100, cs / (st.durs[st.idx] * 1000) * 100) + "%";
+  }, 200);
+
+  $("bPrev").onclick = () => send("prev");
+  $("bNext").onclick = () => send("next");
+  $("bClock").onclick = () => send("clock");
+  $("bReplay").onclick = () => send("replay");
+  $("bAuto").onclick = () => send("auto");
+  $("bPause").onclick = () => send("pause");
+  addEventListener("keydown", e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (["ArrowRight", "PageDown", " ", "Enter", "ArrowDown"].includes(k)) { e.preventDefault(); send("next"); }
+    else if (["ArrowLeft", "PageUp", "Backspace", "ArrowUp"].includes(k)) { e.preventDefault(); send("prev"); }
+    else if (/^[1-9]$/.test(k)) send("goto", { n: Number(k) - 1 });
+    else if (k === "t" || k === "T") send("clock");
+    else if (k === "r" || k === "R") send("replay");
+    else if (k === "a" || k === "A") send("auto");
+    else if (k === "p" || k === "P") send("pause");
+  });
+  send("hello");
+  if (!deck()) $("body").innerHTML = '<p class="wait">Open this window from the slides by pressing N.</p>';
+})();
+</script>
+</body>
+</html>
